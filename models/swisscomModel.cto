@@ -1,0 +1,115 @@
+/**
+ * A business network for shipping sim cards with a promise
+ * The simcard is location controlled and Siwsscom offers 
+ * a discount for late shipments
+ */
+
+namespace ch.swisscom.blockchain
+
+/**
+ * The type of simcard  being shipped
+ */
+enum ProductType {
+  o prepaid
+  o postpaid
+}
+
+/**
+ * The status of a shipment
+ */
+enum ShipmentStatus {
+  o CREATED
+  o IN_TRANSIT
+  o ARRIVED
+}
+
+/**
+ * An abstract transaction that is related to a Shipment
+ */
+abstract transaction ShipmentTransaction {
+  --> SimCard simCard
+}
+
+/**
+ * A Location reading for a shipment. E.g. Bern office ... till address of customer
+ */
+transaction LocationReading extends ShipmentTransaction {
+  o String location
+}
+
+/**
+ * A notification that a simcard has been received by the
+ * customer and that funds should be transferred from the customer
+ * to Swisscom.
+ */
+transaction ShipmentReceived extends ShipmentTransaction {
+}
+
+/**
+ * A simcard being tracked as an asset on the ledger
+ */
+asset SimCard identified by simId {
+  o String simId
+  o ProductType type
+  o ShipmentStatus status
+  o Double freeCredits
+  o LocationReading[] locationReadings optional
+  --> Contract contract
+}
+
+/**
+ * Defines a contract between Swisscom and a customer to ship a sim card
+ * paying a set unit price. The unit price is reduced by
+ * a penality factor proportional to the amount of days that it took
+ * the sim card to arrive
+ */
+asset Contract identified by contractId {
+  o String contractId
+  --> Company company
+  --> Customer customer
+  
+  o DateTime arrivalDateTime
+  o Double unitPrice
+  o Double daysTillSimArrived
+
+  o Double creditsPerDay
+
+}
+
+/**
+ * A concept for a simple street address
+ */
+concept Address {
+  o String city optional
+  o String country
+  o String street optional
+  o String zip optional
+}
+
+/**
+ * An abstract participant type in this business network
+ */
+abstract participant Business identified by email {
+  o String email
+  o Address address
+
+}
+
+/**
+ * A Company is a type of participant in the network
+ */
+participant Company extends Business {
+}
+
+/**
+ * A customer is a type of participant in the network
+ */
+participant Customer extends Business {
+}
+
+
+/**
+ * JUST FOR INITIALIZING A DEMO
+ */
+transaction SetupDemo {
+}
