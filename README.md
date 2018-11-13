@@ -1,56 +1,65 @@
-# Perishable Goods Network
+# Swisscom Blockchain Network
 
-> Example business network that shows growers, shippers and importers defining contracts for the price of perishable goods, based on temperature readings received for shipping containers.
+> Example business network that shows Swisscom  and Customers defining contracts for the price of a sim card, which swisscom ships
+to customers and give "free credits" for everyday of delay (if any). 
 
-The business network defines a contract between growers and importers. The contract stipulates that: On receipt of the shipment the importer pays the grower the unit price x the number of units in the shipment. Shipments that arrive late are free. Shipments that have breached the low temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor. Shipments that have breached the high temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor.
+The business network defines a contract as: 
+The contract stipulates that: On receipt of the Sim card the customer pays Swisscom the unit price 30 CHF.
+Swisscom gives 1CHF as free credits in any case. 
+
+Sim cards that arrive late are gets free credits (10 CHF credits per day).
+The free credits apply automatically using a smart contract. 
+Moreover, the customer and Swisscom are able to see the location of the sim card at anytime (considering that adiqute means  from DHL or Swiss post are provided) 
 
 This business network defines:
 
 **Participants**
-`Grower` `Importer` `Shipper`
+`Company` `Customer`
 
 **Assets**
-`Contract` `Shipment`
+`Contract` `SimCard`
 
 **Transactions**
-`TemperatureReading` `ShipmentReceived` `SetupDemo`
+`LocationReading` `ShipmentReceived` `SetupDemo`
 
-To test this Business Network Definition in the **Test** tab:
+To test this Business Network: 
+Step 1: head to https://composer-playground.mybluemix.net/ 
 
-Submit a `SetupDemo` transaction:
 
-```
-{
-  "$class": "org.acme.shipping.perishable.SetupDemo"
-}
-```
+Step 2: Replace all the code in the **Define** tab with the code in this repository 
 
-This transaction populates the Participant Registries with a `Grower`, an `Importer` and a `Shipper`. The Asset Registries will have a `Contract` asset and a `Shipment` asset.
-
-Submit a `TemperatureReading` transaction:
+Step 3: Submit a `SetupDemo` transaction:
 
 ```
 {
-  "$class": "org.acme.shipping.perishable.TemperatureReading",
-  "centigrade": 8,
-  "shipment": "resource:org.acme.shipping.perishable.Shipment#SHIP_001"
+  "$class": "ch.swisscom.blockchain.SetupDemo"
 }
 ```
 
-If the temperature reading falls outside the min/max range of the contract, the price received by the grower will be reduced. You may submit several readings if you wish. Each reading will be aggregated within `SHIP_001` Shipment Asset Registry.
+This transaction populates the Participant Registries with a `Customer`, an `Company` (will be named Swisscom) . The Asset Registries will have a `Contract` asset and a `SimCard` asset.
 
-Submit a `ShipmentReceived` transaction for `SHIP_001` to trigger the payout to the grower, based on the parameters of the `CON_001` contract:
+*Optional*
+Submit a `LocationReading` transaction:
 
 ```
 {
-  "$class": "org.acme.shipping.perishable.ShipmentReceived",
-  "shipment": "resource:org.acme.shipping.perishable.Shipment#SHIP_001"
+  "$class": "ch.swisscom.blockchain.LocationReading",
+  "location": "Bern",
+  "shipment": "resource:ch.swisscom.blockchain.SimCard#sim_001"
 }
 ```
 
-If the date-time of the `ShipmentReceived` transaction is after the `arrivalDateTime` on `CON_001` then the grower will no receive any payment for the shipment.
+//to do : calculate the number of days correctly 
 
-Congratulations!
+Submit a `ShipmentReceived` transaction for `sim_001` to trigger the payout to Swisscom, based on the parameters of the `CON_001` contract:
 
-## License <a name="license"></a>
-Hyperledger Project source code files are made available under the Apache License, Version 2.0 (Apache-2.0), located in the LICENSE file. Hyperledger Project documentation files are made available under the Creative Commons Attribution 4.0 International License (CC-BY-4.0), available at http://creativecommons.org/licenses/by/4.0/.
+```
+{
+  "$class": "ch.swisscom.blockchain.ShipmentReceived",
+  "shipment": "resource:ch.swisscom.blockchain.SimCardt#sim_001"
+}
+```
+
+If the date-time of the `ShipmentReceived` transaction is after the `arrivalDateTime` on `CON_001` then Swisscom will 
+give 10 CHF as free credits to the customer of `sim_001`
+
