@@ -23,12 +23,12 @@ This business network defines:
 `LocationReading` `ShipmentReceived` `SetupDemo`
 
 To test this Business Network: 
-Step 1: head to https://composer-playground.mybluemix.net/ 
+**Step 1**: head to https://composer-playground.mybluemix.net/ 
 
 
-Step 2: Replace all the code in the **Define** tab with the code in this repository 
+**Step 2**: Replace all the code in the **Define** tab with the code in this repository 
 
-Step 3: Submit a `SetupDemo` transaction:
+**Step 3**: Submit a `SetupDemo` transaction:
 
 ```
 {
